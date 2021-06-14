@@ -41,13 +41,37 @@ function Login() {
     password: "",
   });
 
+  const [errors, setErrors] = useState({
+    username: "",
+    password: "",
+  });
+
   const onChangeForm = (event: any) => {
     const { name, value } = event.target;
     setForm(() => ({ ...form, [name]: value }));
+    setErrors(() => ({ ...errors, [name]: "" }));
   };
 
   const onSubmit = async () => {
     try {
+      if (!form.username && !form.password) {
+        setErrors(() => ({
+          ...errors,
+          username: "Este campo es obligatorio",
+          password: "Este campo es obligatorio",
+        }));
+        return false;
+      }
+
+      if (!form.username) {
+        setErrors(() => ({ ...errors, username: "Este campo es obligatorio" }));
+        return false;
+      }
+
+      if (!form.password) {
+        setErrors(() => ({ ...errors, password: "Este campo es obligatorio" }));
+        return false;
+      }
       const response = await axios({
         method: "POST",
         url: `${URL_API.login}`,
@@ -71,13 +95,11 @@ function Login() {
             fire.title = "¡Completado!";
             fire.text = "Se ha iniciado sesión correctamente";
             redirect = true;
-            sessionStorage.setItem("token", "11");
+            sessionStorage.setItem("token", response.data.token);
           } else {
             fire.icon = "info";
             fire.title = "Upps!, ocurrió un error";
             fire.text = response.data.body;
-            sessionStorage.setItem("token", "11");
-            redirect = true;
           }
           return sweet.fire(fire).then(() => {
             if (redirect) {
@@ -112,6 +134,8 @@ function Login() {
             autoComplete="off"
             autoFocus
             onChange={onChangeForm}
+            error={errors.username.length > 0}
+            helperText={errors.username.length ? errors.username : ""}
           />
           <TextField
             variant="outlined"
@@ -124,6 +148,8 @@ function Login() {
             id="password"
             autoComplete="off"
             onChange={onChangeForm}
+            error={errors.password.length > 0}
+            helperText={errors.password.length ? errors.password : ""}
           />
           <Button
             type="button"

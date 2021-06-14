@@ -52,7 +52,7 @@ export default function Home({ user = "Usuario" }) {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <img src={Logo} alt="Home" className="App-logo" />
+        <img src={Logo} alt="Home" className={"App-logo"} />
         {tokenExists ? (
           <>
             <Grid container direction="row" spacing={2}>
